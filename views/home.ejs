@@ -7,12 +7,28 @@
     <script src="jquery-3.1.1.min.js"></script>
     <script type="text/javascript">
       $(document).ready(() => {
+        $('#div-chat').hide();
         var socket = io();
 
         $('#list-room li').click(function(){
           $('#list-room li').removeClass('active-room');
           $(this).addClass('active-room');
         });
+        //Tinh nang dang ky username
+        $('#btn-dang-ky').click(() => {
+          var username = $('#txt-username').val();
+          socket.emit('CLIENT_REGISTER', username);
+        });
+
+        socket.on('SERVER_CONFIRM_USERNAME', confirm => {
+          if(confirm){
+            alert('Dang ky thanh cong');
+            $('#div-dang-ky').hide();
+            $('#div-chat').show();
+          }else{
+            alert('Username da ton tai')
+          }
+        })
       });
     </script>
     <style>
@@ -28,5 +44,16 @@
         <li><%=e%></li>
       <%});%>
     </ul>
+
+    <div id="div-dang-ky">
+      <input type="text" id="txt-username" placeholder="Enter your username"/>
+      <br><br>
+      <button id="btn-dang-ky">Sign up</button>
+    </div>
+    <div id="div-chat">
+      <input type="text" id="txt-msg" placeholder="Enter your message"/>
+      <br><br>
+      <button id="btn-send">Send</button>
+    </div>
   </body>
 </html>
