@@ -38,7 +38,7 @@
           }
         })
 
-        socket.on('SERVER_SEND_MESSAGE', msg => alert(msg));
+        socket.on('SERVER_SEND_MESSAGE', msg => $('#list-message').append(`<li>${msg}</li>`));
       });
     </script>
     <style>
@@ -62,6 +62,8 @@
           <li><%=e%></li>
         <%});%>
       </ul>
+      <hr>
+      <ul id="list-message"></ul>
       <input type="text" id="txt-msg" placeholder="Enter your message"/>
       <br><br>
       <button id="btn-send">Send</button>

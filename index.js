@@ -4,13 +4,22 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 server.listen(3000, () => console.log('Server started'));
 
-var mangRoom = ['Hoc tap', 'Kinh te', 'An choi', 'Chung khoan', 'Giai tri'];
+function Room(roomName){
+  this.roomName = roomName;
+  this.mang = [];
+}
+var mangRoom = [
+  new Room('Hoc tap'),
+  new Room('An choi'),
+  new Room('Kinh te'),
+  new Room('Chung khoan')
+];
 var mangUsername = [];
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static('public'));
-app.get('/', (req, res) => res.render('home',{mangRoom}));
+app.get('/', (req, res) => res.render('home',{mangRoom: mangRoom.map(e => e.roomName)}));
 
 io.on('connection', socket => {
   console.log('Co nguoi ket noi');
@@ -25,13 +34,11 @@ io.on('connection', socket => {
   });
 
   socket.on('CLIENT_JOIN_ROOM', roomName => {
-    socket.leave(socket.currentRoom);
-    socket.join(roomName, () => {
-      console.log(socket.rooms);//Canh giac
-      socket.currentRoom = roomName;
+    socket.leave(socket.currentRoom, () => {
+      socket.join(roomName, () => {
+        socket.currentRoom = roomName;
+      });
     });
-
-    console.log(`${socket.username} join ${roomName}`);
   });
 
   socket.on('CLIENT_SEND_MESSAGE', msg => {
