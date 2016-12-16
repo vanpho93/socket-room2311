@@ -39,9 +39,14 @@ io.on('connection', socket => {
         socket.currentRoom = roomName;
       });
     });
+    var room = mangRoom.find(e => e.roomName == roomName);
+    socket.emit('ROOM_MESSAGE', room.mang);
   });
 
   socket.on('CLIENT_SEND_MESSAGE', msg => {
-    io.to(socket.currentRoom).emit('SERVER_SEND_MESSAGE', `${socket.username}: ${msg}`);
+    var message = `${socket.username}: ${msg}`
+    io.to(socket.currentRoom).emit('SERVER_SEND_MESSAGE', message);
+    var room = mangRoom.find(e => e.roomName == socket.currentRoom);
+    room.mang.push(message);
   });
 });

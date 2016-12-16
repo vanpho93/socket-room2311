@@ -39,6 +39,11 @@
         })
 
         socket.on('SERVER_SEND_MESSAGE', msg => $('#list-message').append(`<li>${msg}</li>`));
+
+        socket.on('ROOM_MESSAGE', mang => {
+          $('#list-message li').remove();
+          mang.forEach(e => $('#list-message').append(`<li>${e}</li>`))
+        });
       });
     </script>
     <style>
