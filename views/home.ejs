@@ -6,6 +6,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="jquery-3.1.1.min.js"></script>
     <script type="text/javascript">
+      var roomName;
       $(document).ready(() => {
         $('#div-chat').hide();
         var socket = io();
@@ -13,11 +14,18 @@
         $('#list-room li').click(function(){
           $('#list-room li').removeClass('active-room');
           $(this).addClass('active-room');
+          roomName = $(this).html();
+          socket.emit('CLIENT_JOIN_ROOM', roomName);
         });
         //Tinh nang dang ky username
         $('#btn-dang-ky').click(() => {
           var username = $('#txt-username').val();
           socket.emit('CLIENT_REGISTER', username);
+        });
+
+        $('#btn-send').click(() => {
+          var msg = $('#txt-msg').val();
+          socket.emit('CLIENT_SEND_MESSAGE', msg);
         });
 
         socket.on('SERVER_CONFIRM_USERNAME', confirm => {
@@ -29,6 +37,8 @@
             alert('Username da ton tai')
           }
         })
+
+        socket.on('SERVER_SEND_MESSAGE', msg => alert(msg));
       });
     </script>
     <style>
@@ -39,11 +49,7 @@
   </head>
   <body>
     <h1>Khoa Pham Training</h1>
-    <ul id="list-room">
-      <%mangRoom.forEach(e => {%>
-        <li><%=e%></li>
-      <%});%>
-    </ul>
+
 
     <div id="div-dang-ky">
       <input type="text" id="txt-username" placeholder="Enter your username"/>
@@ -51,6 +57,11 @@
       <button id="btn-dang-ky">Sign up</button>
     </div>
     <div id="div-chat">
+      <ul id="list-room">
+        <%mangRoom.forEach(e => {%>
+          <li><%=e%></li>
+        <%});%>
+      </ul>
       <input type="text" id="txt-msg" placeholder="Enter your message"/>
       <br><br>
       <button id="btn-send">Send</button>
